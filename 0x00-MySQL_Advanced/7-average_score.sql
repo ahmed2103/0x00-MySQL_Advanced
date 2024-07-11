@@ -9,11 +9,11 @@ BEGIN
 
     SELECT SUM(score) INTO total
     FROM corrections
-    WHERE user_id = user_id;
+    WHERE corrections.user_id = user_id;
 
     SELECT COUNT(*) INTO cnt
     FROM corrections
-    WHERE user_id = user_id;
+    WHERE corrections.user_id = user_id;
 
     UPDATE users
     SET average_score = IF(cnt = 0,0, total / cnt)
