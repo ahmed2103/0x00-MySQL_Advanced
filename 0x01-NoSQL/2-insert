@@ -1,5 +1,5 @@
 // Mongo script to insert data
 
 db.school.insertOne({
-    name: "Holberton school"
+    "name": "Holberton school"
 });

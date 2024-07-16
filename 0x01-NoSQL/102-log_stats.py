@@ -38,8 +38,7 @@ if __name__ == "__main__":
             }
         }
     ]
-print('IPs:', end='')
+print('IPs:')
 
 for top_ip in nginx_logs.aggregate(ip_pipe):
-    print('\n\t{}: {}'.format(top_ip['ip'], top_ip['ip_count']),
-          end='')
+    print('\t{}: {}'.format(top_ip['ip'], top_ip['ip_count']))
