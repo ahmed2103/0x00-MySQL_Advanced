@@ -17,6 +17,7 @@ def logs_methods_print(nginx_col):
 
 
 def top_10_IPs(nginx_col):
+    """function that prints nginx logs stored in MongoDB and methods"""
     ip_pipe = [{
         "$group":
             {
