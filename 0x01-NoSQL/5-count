@@ -1,3 +1,2 @@
 // Mongo script displays the number of documents in the collection school.
-
-db.school.countDocuments();
+db.school.find().count();
