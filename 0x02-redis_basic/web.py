@@ -20,7 +20,7 @@ def cache_page(func: Callable) -> Callable:
             return cached_page.decode("utf-8")
         result = func(url)
         redis_client.set("count:{}".format(url), 0)
-        redis_client.setex(url, 10, result)
+        redis_client.setex('result:{}'.format(url), 10, result)
         return result
     return wrapper
 
