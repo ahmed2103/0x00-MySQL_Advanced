@@ -1,31 +1,38 @@
 #!/usr/bin/env python3
-"""Module to count the number a certain page has been accessed"""
+'''A module with tools for request caching and tracking.
+'''
+import redis
+import requests
+from functools import wraps
 from typing import Callable
 
-from requests import get
-from redis import Redis
-from functools import wraps
 
-redis_client = Redis()
+redis_store = redis.Redis()
+'''The module-level Redis instance.
+'''
 
 
-def cache_page(func: Callable) -> Callable:
-    """Cache the page to increase performance"""
-    @wraps(func)
-    def wrapper(url: str) -> str:
-        """Syntatic sugar wraps the callable function"""
-        redis_client.incr("count:{}".format(url))
-        cached_page = redis_client.get(url)
-        if cached_page:
-            return cached_page.decode("utf-8")
-        result = func(url)
-        redis_client.set("count:{}".format(url), 0)
-        redis_client.setex('result:{}'.format(url), 10, result)
+def data_cacher(method: Callable) -> Callable:
+    '''Caches the output of fetched data.
+    '''
+    @wraps(method)
+    def invoker(url) -> str:
+        '''The wrapper function for caching the output.
+        '''
+        redis_store.incr(f'count:{url}')
+        result = redis_store.get(f'result:{url}')
+        if result:
+            return result.decode('utf-8')
+        result = method(url)
+        redis_store.set(f'count:{url}', 0)
+        redis_store.setex(f'result:{url}', 10, result)
         return result
-    return wrapper
+    return invoker
 
 
-@cache_page
+@data_cacher
 def get_page(url: str) -> str:
-    """Make http GET request to url and return the html content"""
-    return get(url).text
+    '''Returns the content of a URL after caching the request's response,
+    and tracking the request.
+    '''
+    return requests.get(url).text
